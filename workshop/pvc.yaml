@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cs-pvc
+  namespace: codeserver
+  labels:
+    app: cs
+# k get SC to get SC names
+# volume attached to a node, any pod can attach to the volume -> find out types of accessModes
+spec:
+  storageClassName: do-block-storage
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
