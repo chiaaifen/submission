@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minioi-sts
+  namespace: minio-ns
+spec:
+  serviceName: minio-hsvc
+  replicas: 4
+  selector:
+    matchLabels:
+      app: minio
+      name: minio-sts
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        storageClassName: do-block-storage
+        accessModes: 
+        - ReadWriteOnce
+  template:
+    metadata: 
+      name: minio-po
+      labels:
+        app: minio
+        name: minio-sts
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          envFrom: 
+          - configMapRef:
+              name: minio-cm
+            secretRef:
+              name: minio-secret
+          ports:
+            - containerPort: 9000
+            - containerPort: 9090
+          resources:
+            requests:
+              memory: 200M
+              cpu: 250m
+            limits:
+              memory: 200M
+              cpu: 250m
+          volumeMounts:
+            - name: data-vol
+              mountPath: /data
+
